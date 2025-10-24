@@ -49,3 +49,16 @@ Upload code: Upload the sketch to your Arduino. Power On: Connect both your Ardu
 If it doesn't work : My code's assumption is BLACK = HIGH. If your robot immediately drives off the line, the sensor might be the opposite (BLACK = LOW).
 
 To fix this: Change every == HIGH in the void loop() section to == LOW.
+
+
+WHAT I LEARNT WHILE MAKING THIS:
+This is my first ever project in any domain. I had never ever used Arduino before. I used to make robots only through kits availble in market.
+So in this process, 
+I learnt the coding language for Arduino.
+I learnt how to use breadboard.
+I learnt how to make circuits in projects.
+I learnt how make connections in Arduino.
+I got to learn about motor drivers and how to operate them with arduino.
+(Like online i used to see L298M motor driver but only l293d was available in tinkercad...so in that process i got to learn a bit deeper about motor drivers.
+And had a lot of fun using Tinkercad.
+I am still learning how to use PID and will shortly make a line follower robot based on analogRead , PWM using PID.
