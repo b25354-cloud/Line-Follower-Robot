@@ -1,0 +1,176 @@
+//Line Follower Robot Code - DIGITAL PIN
+  
+// Motor Driver 1 (Left Side Motors)
+int l293dEnable1234 = 2; // Enable pin for motors 1 & 2
+int motor12Dir1 = 3;      // Pin for Motor 1
+int motor12Dir2 = 4;      // Pin for Motor 2
+
+// Motor Driver 2 (Right Side Motors)
+int l293dEnaable1234 = 10; // Enable pin for motors 3 & 4
+int motor34Dir1 = 11;     // Pin for Motor 3
+int motor34Dir2 = 12;     // Pin for Motor 4
+
+char IR1 = A1; // Left-most sensor
+char IR2 = A2; // Left sensor
+char IR3 = A3; // Center sensor
+char IR4 = A4; // Right sensor
+char IR5 = A5; // Right-most sensor
+
+
+void setup() {
+  Serial.begin(9600); // For debugging, if needed
+
+    pinMode(l293dEnable1234, OUTPUT);
+  pinMode(motor12Dir1, OUTPUT);
+  pinMode(motor12Dir2, OUTPUT);
+  pinMode(l293dEnaable1234, OUTPUT);
+  pinMode(motor34Dir1, OUTPUT);
+  pinMode(motor34Dir2, OUTPUT);
+
+  pinMode(IR1, INPUT);
+  pinMode(IR2, INPUT);
+  pinMode(IR3, INPUT);
+  pinMode(IR4, INPUT);
+  pinMode(IR5, INPUT);
+}
+
+-
+void loop() {
+ 
+  // I assume BLACK line = HIGH, WHITE surface = LOW.
+  
+  bool s1 = (digitalRead(IR1) == HIGH); // Far Left
+  bool s2 = (digitalRead(IR2) == HIGH); // Left
+  bool s3 = (digitalRead(IR3) == HIGH); // Center
+  bool s4 = (digitalRead(IR4) == HIGH); // Right
+  bool s5 = (digitalRead(IR5) == HIGH); // Far Right
+
+  
+
+  if (s3 && !s2 && !s4) {
+    // CENTER: Only center sensor (s3) sees black.
+    // [LOW, LOW, HIGH, LOW, LOW]
+    	driveForward();
+  } 
+  
+  else if (s2 && s3) {
+    // RIGHT: Center (s3) and Left (s2) see black.
+    // [LOW, HIGH, HIGH, LOW, LOW]
+    	turnLeft(); // Need to turn left to get back on center
+  } 
+  
+  else if (s4 && s3) {
+    // LEFT: Center (s3) and Right (s4) see black.
+    // [LOW, LOW, HIGH, HIGH, LOW]
+    	turnRight(); // Need to turn right to get back on center
+  }
+
+  else if (s2 && !s3) {
+    // SHARP RIGHT: Only Left sensor (s2) sees black.
+    // [LOW, HIGH, LOW, LOW, LOW]
+    	turnLeft();
+    	turnLeft();
+  }
+  
+  else if (s4 && !s3) {
+    // SHARP LEFT: Only Right sensor (s4) sees black.
+    // [LOW, LOW, LOW, HIGH, LOW]
+    	turnRight();
+    	turnRight();
+  }
+
+  else if (s1) {
+    // SHARP RIGHT: Far-left (s1) sees black.
+        turnLeft();
+	turnLeft();
+  }
+  
+  else if (s5) {
+    // SHARP LEFT: Far-right (s5) sees black.
+        turnRight();
+	turnRight();
+
+  }
+  
+  else if (!s1 && !s2 && !s3 && !s4 && !s5) {
+    // LINE LOST: All sensors see white.
+    // [LOW, LOW, LOW, LOW, LOW]
+    stopMotors();
+
+  else if (s1 && s2 && s3 && s4 && s5) {
+    // Intersection: All sensors see black
+    // [HIGH, HIGH, HIGH, HIGH, HIGH]
+       driveForward();
+      }
+
+  else if (s1 && s2 && s3) {
+    driveForward();
+  }
+}
+
+
+//Motor Control Functions (Digital ON/OFF)
+
+void driveForward() {
+ 
+  digitalWrite(l293dEnable1234, HIGH);
+  digitalWrite(l293dEnaable1234, HIGH);
+
+  // Left Motors FORWARD
+  digitalWrite(motor12Dir1, HIGH);
+  digitalWrite(motor12Dir2, LOW);
+
+  // Right Motors FORWARD
+  digitalWrite(motor34Dir1, HIGH);
+  digitalWrite(motor34Dir2, LOW);
+}
+
+void driveBackward() {
+
+  digitalWrite(l293dEnable1234, HIGH);
+  digitalWrite(l293dEnaable1234, HIGH);
+
+  // Left Motors BACKWARD
+  digitalWrite(motor12Dir1, LOW);
+  digitalWrite(motor12Dir2, HIGH);
+
+  // Right Motors BACKWARD
+  digitalWrite(motor34Dir1, LOW);
+  digitalWrite(motor34Dir2, HIGH);
+}
+
+void turnRight() {
+  
+  digitalWrite(l293dEnable1234, HIGH);
+  digitalWrite(l293dEnaable1234, HIGH);
+
+  // Left Motors FORWARD
+  digitalWrite(motor12Dir1, HIGH);
+  digitalWrite(motor12Dir2, LOW);
+
+  // Right Motors BACKWARD
+  digitalWrite(motor34Dir1, LOW);
+  digitalWrite(motor34Dir2, HIGH);
+}
+
+void turnLeft() {
+  
+  digitalWrite(l293dEnable1234, HIGH);
+  digitalWrite(l293dEnaable1234, HIGH);
+
+  // Left Motors BACKWARD
+  digitalWrite(motor12Dir1, LOW);
+  digitalWrite(motor12Dir2, HIGH);
+
+  // Right Motors FORWARD
+  digitalWrite(motor34Dir1, HIGH);
+  digitalWrite(motor34Dir2, LOW);
+}
+
+void stopMotors() {
+   
+  digitalWrite(l293dEnable1234, LOW);
+  digitalWrite(l293dEnaable1234, LOW);
+}
+
+
